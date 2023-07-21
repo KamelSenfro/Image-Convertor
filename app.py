@@ -47,8 +47,92 @@ def convert_jpg_to_png():
     png_img.seek(0)
 
     # Create a response object with the PNG image as an attachment
+    response: Any = make_response(png_img.read())
+    response.headers.set('Content-Type', 'image/png')
+    response.headers.set('Content-Disposition', 'attachment', filename='image.png')
+
+    return response
+
+@app.route('/api/pngtojpg', methods=['POST'])
+def convert_png_to_jpg():
+    # Get the image file from the request parameter
+    file = request.files['file']
+
+    # Open the image file with Pillow
+    img = Image.open(file)
+
+    # Convert the image to JPG format
+    jpg_img = io.BytesIO()
+    img.convert('RGB').save(jpg_img, format='JPEG')
+    jpg_img.seek(0)
+
+    # Create a response object with the JPG image as an attachment
+    response = make_response(jpg_img.read())
+    response.headers.set('Content-Type', 'image/jpeg')
+    response.headers.set('Content-Disposition', 'attachment', filename='image.jpg')
+@app.route('/api/bmptopng', methods=['POST'])
+def convert_bmp_to_png():
+    # Get the image file from the request parameter
+    file = request.files['file']
+
+    # Open the image file with Pillow
+    img = Image.open(file)
+
+    # Convert the image to PNG format
+    png_img = io.BytesIO()
+    img.save(png_img, format='PNG')
+    png_img.seek(0)
+
+    # Create a response object with the PNG image as an attachment
     response = make_response(png_img.read())
     response.headers.set('Content-Type', 'image/png')
     response.headers.set('Content-Disposition', 'attachment', filename='image.png')
-if __name__ == "__main__":
-            app.run(debug=True)
+
+    return response    
+@app.route('/api/webptopng', methods=['POST'])
+def convert_webp_to_png():
+    # Get the image file from the request parameter
+    file = request.files['file']
+
+    # Open the image file with Pillow
+    img = Image.open(file)
+
+    # Convert the image to PNG format
+    png_img = io.BytesIO()
+    img.save(png_img, format='PNG')
+    png_img.seek(0)
+
+    # Create a response object with the PNG image as an attachment
+    response = make_response(png_img.read())
+    response.headers.set('Content-Type', 'image/png')
+    response.headers.set('Content-Disposition', 'attachment', filename='image.png')
+
+    return response
+@app.route('/api/pngtopdf', methods=['POST'])
+def convert_png_to_pdf():
+    # Get the image file from the request parameter
+    file = request.files['file']
+
+    # Open the image file with Pillow
+    img = Image.open(file)
+
+    # Create a new PDF file with the same dimensions as the image
+    pdf_img = Image.new('RGB', img.size, (255, 255, 255))
+
+    # Paste the image onto the PDF file
+    pdf_img.paste(img, mask=img.split()[3])
+
+    # Convert the PDF file to bytes
+    pdf_bytes = io.BytesIO()
+    pdf_img.save(pdf_bytes, format='PDF')
+    pdf_bytes.seek(0)
+
+    # Create a response object with the PDF file as an attachment
+    response = make_response(pdf_bytes.read())
+    response.headers.set('Content-Type', 'application/pdf')
+    response.headers.set('Content-Disposition', 'attachment', filename='image.pdf')
+
+    return response
+if __name__ == '__main__':
+    app.run()
+   
