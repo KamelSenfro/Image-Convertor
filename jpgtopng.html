@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JPG to PNG Converter</title>
+</head>
+<body>
+    <h1>JPG to PNG Converter</h1>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" id="imageInput" name="image" accept=".jpg">
+        <input type="button" value="Convert to PNG" onclick="convertToPNG()">
+    </form>
+    <div id="errorDisplay"></div>
+
+    <script>
+        function convertToPNG() {
+            const input = document.getElementById('imageInput');
+            const file = input.files[0];
+
+            if (!file) {
+                showError('Please select an image.');
+                return;
+            }
+
+            if (!file.type.startsWith('image/jpeg')) {
+                showError('The selected file is not in JPG format.');
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                showError('Image size should not exceed 5MB.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('image', file);
+
+            fetch('/api/jpgtopng', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Conversion successful, handle response as needed
+                    console.log('Conversion successful!');
+                } else {
+                    // Conversion failed, handle error response as needed
+                    console.error('Conversion failed.');
+                }
+            })
+            .catch(error => {
+                console.error('An error occurred during conversion:', error);
+            });
+        }
+
+        function showError(message) {
+            const errorDisplay = document.getElementById('errorDisplay');
+            errorDisplay.innerText = message;
+        }
+    </script>
+</body>
+</html>
